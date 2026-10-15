@@ -1,22 +1,13 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% block title %}{{ title|default('Page Not Found | SchoolAtlas') }}{% endblock %}
 {% block description %}The requested page or school profile could not be found in SchoolAtlas.{% endblock %}
 {% block content %}
 <section class="error">
   <span>{% if is_404 %}?{% else %}!{% endif %}</span>
-  <h1>{{ title|default('Page Not Found') }}</h1>
+  <h1>{{ title|default('Notice') }}</h1>
   <p>{{ message }}</p>
-  {% if is_404 %}
   <div style="margin-top:24px;display:flex;gap:12px;flex-wrap:wrap">
-    <a class="primary" href="{{ url_for('home') }}">Browse School Directory <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <a class="primary" href="{{ url_for('home') }}">Return to Homepage <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
   </div>
-  {% else %}
-  <ol>
-    <li>Verify that your SQLite file is present as <code>schools.db</code> or configure <code>SCHOOLS_DB_PATH</code>.</li>
-    <li>Ensure the main table is named <code>schools</code> or set <code>SCHOOLS_TABLE</code>.</li>
-    <li>Check that required permissions are granted.</li>
-  </ol>
-  <p><a class="primary" href="{{ url_for('home') }}">Return to Homepage</a></p>
-  {% endif %}
 </section>
 {% endblock %}
