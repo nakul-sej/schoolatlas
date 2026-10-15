@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0b2342">
+<title>{% block title %}{{ title|default('SchoolAtlas | Indian School Directory') }}{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ description|default('Explore school profiles, locations, class ranges and available contact information across India.') }}{% endblock %}">
+<link rel="canonical" href="{{ canonical|default(site_root + request.path, true) }}">
+{% if noindex|default(false) %}<meta name="robots" content="noindex,follow">{% else %}<meta name="robots" content="index,follow,max-image-preview:large">{% endif %}
+<meta property="og:site_name" content="SchoolAtlas">
+<meta property="og:type" content="{% block og_type %}website{% endblock %}">
+<meta property="og:title" content="{% block og_title %}{{ title|default('SchoolAtlas | Indian School Directory') }}{% endblock %}">
+<meta property="og:description" content="{% block og_description %}{{ description|default('Explore school profiles, locations and available school information across India.') }}{% endblock %}">
+<meta property="og:url" content="{{ canonical|default(site_root + request.path, true) }}">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{% block twitter_title %}{{ title|default('SchoolAtlas | Indian School Directory') }}{% endblock %}">
+<meta name="twitter:description" content="{% block twitter_description %}{{ description|default('Explore school profiles, locations and available school information across India.') }}{% endblock %}">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='%23ffc53d'/%3E%3Cpath d='M16 6l2.6 7.4L26 16l-7.4 2.6L16 26l-2.6-7.4L6 16l7.4-2.6z' fill='%230b2342'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<!-- Icon + illustration sprite (original artwork, no external assets) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="g-hill-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d4eadf"/><stop offset="1" stop-color="#bddfcd"/></linearGradient>
+    <linearGradient id="g-hill-b" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a6d6bd"/><stop offset="1" stop-color="#86c4a5"/></linearGradient>
+    <linearGradient id="g-ground" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fb896"/><stop offset="1" stop-color="#4fa07c"/></linearGradient>
+  </defs>
+
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-arrow-ur" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12.5 4.5 4.5L19 7"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-2-8-2v14c3 0 6 .5 8 2 2-1.5 5-2 8-2V4c-3 0-6 .5-8 2zM12 6v14"/></symbol>
+  <symbol id="i-badge" viewBox="0 0 24 24"><circle cx="12" cy="9" r="5.5"/><path d="m8.5 13.5-1.5 7 5-2.5 5 2.5-1.5-7"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M4 21V9l8-5 8 5v12M2 21h20M9 21v-6h6v6M9 11h.01M15 11h.01"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 2l2.4 7.1L22 12l-7.6 2.9L12 22l-2.4-7.1L2 12l7.6-2.9z"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9zM9 12h6M9 16h4"/></symbol>
+
+  <!-- Illustration: schoolhouse -->
+  <symbol id="art-school" viewBox="0 0 300 200">
+    <rect x="8" y="95" width="92" height="100" rx="3" fill="#fff"/>
+    <rect x="200" y="95" width="92" height="100" rx="3" fill="#fff"/>
+    <rect x="2" y="88" width="104" height="10" rx="3" fill="#0b2342"/>
+    <rect x="194" y="88" width="104" height="10" rx="3" fill="#0b2342"/>
+    <rect x="88" y="62" width="124" height="133" fill="#fff"/>
+    <rect x="190" y="62" width="22" height="133" fill="#e6edf5"/>
+    <polygon points="78,66 150,18 222,66" fill="#0b2342"/>
+    <polygon points="98,64 150,29 202,64" fill="#17406f"/>
+    <line x1="150" y1="18" x2="150" y2="0" stroke="#0b2342" stroke-width="2"/>
+    <polygon points="150,2 170,7 150,13" fill="#ff6b4a"/>
+    <circle cx="150" cy="50" r="11" fill="#ffc53d"/>
+    <path d="M150 43v7l4 3" stroke="#0b2342" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <g fill="#9cc7e4">
+      <rect x="20" y="112" width="16" height="24" rx="2"/><rect x="50" y="112" width="16" height="24" rx="2"/><rect x="78" y="112" width="14" height="24" rx="2"/>
+      <rect x="20" y="152" width="16" height="24" rx="2"/><rect x="50" y="152" width="16" height="24" rx="2"/><rect x="78" y="152" width="14" height="24" rx="2"/>
+      <rect x="208" y="112" width="14" height="24" rx="2"/><rect x="234" y="112" width="16" height="24" rx="2"/><rect x="264" y="112" width="16" height="24" rx="2"/>
+      <rect x="208" y="152" width="14" height="24" rx="2"/><rect x="234" y="152" width="16" height="24" rx="2"/><rect x="264" y="152" width="16" height="24" rx="2"/>
+      <rect x="106" y="80" width="18" height="30" rx="2"/><rect x="176" y="80" width="18" height="30" rx="2"/>
+      <rect x="106" y="124" width="18" height="30" rx="2"/><rect x="176" y="124" width="18" height="30" rx="2"/>
+    </g>
+    <path d="M134 195v-40a16 16 0 0 1 32 0v40z" fill="#0b2342"/>
+    <path d="M150 139v56" stroke="#17406f" stroke-width="2"/>
+    <rect x="118" y="190" width="64" height="5" fill="#c9d6e4"/>
+    <rect x="110" y="195" width="80" height="5" fill="#b4c4d6"/>
+  </symbol>
+
+  <!-- Illustration: landscape + schoolhouse (sky and sun are layered behind it) -->
+  <symbol id="art-scene" viewBox="0 0 480 440">
+    <g fill="#fff" opacity=".9">
+      <ellipse cx="86" cy="92" rx="38" ry="11"/><ellipse cx="112" cy="82" rx="26" ry="12"/>
+      <ellipse cx="300" cy="64" rx="30" ry="9"/><ellipse cx="320" cy="56" rx="20" ry="9"/>
+    </g>
+    <path d="M0 300C80 250 170 250 250 285S410 300 480 255V440H0z" fill="url(#g-hill-a)"/>
+    <path d="M0 345C100 312 200 332 290 342S430 332 480 312V440H0z" fill="url(#g-hill-b)"/>
+    <path d="M0 384C120 368 260 376 480 362V440H0z" fill="url(#g-ground)"/>
+    <path d="M222 405h36l52 35H170z" fill="#f2e4bd"/>
+    <use href="#art-school" x="90" y="205" width="300" height="200"/>
+    <g>
+      <rect x="40" y="362" width="9" height="52" rx="3" fill="#7a5a3a"/>
+      <circle cx="44" cy="348" r="34" fill="#2f8f6b"/><circle cx="26" cy="370" r="22" fill="#3fa57f"/><circle cx="64" cy="372" r="22" fill="#37996f"/>
+    </g>
+    <g>
+      <rect x="436" y="366" width="9" height="48" rx="3" fill="#7a5a3a"/>
+      <circle cx="440" cy="352" r="30" fill="#2f8f6b"/><circle cx="458" cy="372" r="20" fill="#3fa57f"/><circle cx="422" cy="374" r="20" fill="#37996f"/>
+    </g>
+    <g fill="#ffc53d"><circle cx="150" cy="418" r="3"/><circle cx="332" cy="420" r="3"/><circle cx="108" cy="426" r="2.5"/><circle cx="372" cy="428" r="2.5"/></g>
+  </symbol>
+</svg>
+
+<header class="topbar" id="top">
+  <a class="brand" href="{{ url_for('home') }}" aria-label="SchoolAtlas home">
+    <span class="logo"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg></span>
+    <span><b>SchoolAtlas</b><small>Discover · Compare · Connect</small></span>
+  </a>
+  <nav id="site-nav" aria-label="Primary">
+    <a href="{{ url_for('home') }}">Find schools</a>
+    <a href="{{ url_for('home') }}#directory">Directory</a>
+    <a href="{{ url_for('home') }}#about">About</a>
+  </nav>
+  <div class="top-actions">
+    <a class="top-cta" href="{{ url_for('home') }}#directory">Explore schools <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="site-nav">
+      <svg class="ico ico-menu" aria-hidden="true"><use href="#i-menu"/></svg>
+      <svg class="ico ico-close" aria-hidden="true"><use href="#i-close"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="main">{% block content %}{% endblock %}</main>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <a class="brand" href="{{ url_for('home') }}"><span class="logo"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg></span><span><b>SchoolAtlas</b><small>India's school directory</small></span></a>
+      <p>Clear, useful school information in one place.</p>
+    </div>
+    <div>
+      <b>Explore</b>
+      <a href="{{ url_for('home') }}">Find schools</a>
+      <a href="{{ url_for('home') }}#directory">Browse directory</a>
+    </div>
+    <div>
+      <b>Important</b>
+      <p>Information may be incomplete or outdated. Verify important details directly with schools.</p>
+      <small>Independent directory · Not an official government portal</small>
+    </div>
+  </div>
+  <div class="footer-bottom">© 2026 SchoolAtlas <span>Made for school discovery</span></div>
+</footer>
+
+<script>
+(function () {
+  var header = document.querySelector('.topbar');
+  var toggle = document.querySelector('.nav-toggle');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Header elevation on scroll */
+  function onScroll() { header.classList.toggle('scrolled', window.scrollY > 8); }
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  /* Mobile navigation */
+  function setNav(open) {
+    header.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  }
+  toggle.addEventListener('click', function () { setNav(!header.classList.contains('open')); });
+  document.querySelectorAll('#site-nav a').forEach(function (a) { a.addEventListener('click', function () { setNav(false); }); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setNav(false); });
+
+  /* Reveal on view */
+  var reveals = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window) || reduce) {
+    reveals.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  /* Count-up for headline numbers */
+  var counters = document.querySelectorAll('[data-count]');
+  function run(el) {
+    var final = el.textContent;
+    var target = parseInt(final.replace(/[^0-9]/g, ''), 10);
+    if (isNaN(target) || reduce) return;
+    var start = null, dur = 1400;
+    function tick(t) {
+      if (start === null) start = t;
+      var p = Math.min((t - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 4);
+      el.textContent = Math.round(target * eased).toLocaleString('en-US');
+      if (p < 1) requestAnimationFrame(tick); else el.textContent = final;
+    }
+    requestAnimationFrame(tick);
+  }
+  if ('IntersectionObserver' in window) {
+    var co = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) { run(en.target); co.unobserve(en.target); } });
+    }, { threshold: 0.6 });
+    counters.forEach(function (el) { co.observe(el); });
+  }
+})();
+</script>
+</body>
+</html>

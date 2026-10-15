@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Find Schools Across India | SchoolAtlas{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-copy">
+    <span class="eyebrow">India school directory</span>
+    <h1>Find the right school.<br><em>Start with the facts.</em></h1>
+    <p>Explore school profiles, locations, class ranges and available contact information — all in one place.</p>
+    <form class="search" action="{{ url_for('home') }}" role="search">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <input name="q" value="{{ q }}" placeholder="School name, UDISE code, city or PIN code" aria-label="Search schools">
+      <button>Search schools <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></button>
+    </form>
+    <div class="checks">
+      <span><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>School information</span>
+      <span><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Location discovery</span>
+      <span><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Quick comparisons</span>
+    </div>
+  </div>
+
+  <div class="hero-art" aria-hidden="true">
+    <div class="sun"></div>
+    <svg class="art-svg" viewBox="0 0 480 440" preserveAspectRatio="xMidYMax slice" focusable="false">
+      <use href="#art-scene"/>
+      <path class="route" d="M-10 150C60 90 130 175 190 125S232 150 240 172" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      <g transform="translate(240 194)">
+        <ellipse class="pin-ring" cx="0" cy="0" rx="16" ry="5" fill="none" stroke="#ff6b4a" stroke-width="2"/>
+        <g class="pin-drop">
+          <path d="M0 0C-4-8-19-22-19-37a19 19 0 1 1 38 0C19-22 4-8 0 0z" fill="#ff6b4a"/>
+          <circle cx="0" cy="-37" r="7.5" fill="#fff"/>
+        </g>
+      </g>
+    </svg>
+    <div class="label-art art-chip">LEARN <b>✦</b></div>
+    <div class="books"><span>KNOWLEDGE</span><span>GROWTH</span><span>POSSIBILITY</span></div>
+    <div class="art-caption">Every school<br>has a story.</div>
+  </div>
+</section>
+
+<section class="stats">
+  <div><i><svg class="ico" aria-hidden="true"><use href="#i-building"/></svg></i><span><b data-count>{{ '{:,}'.format(stats.total) }}</b><small>School records</small></span></div>
+  <div><i><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg></i><span><b data-count>{{ '{:,}'.format(stats.states) }}</b><small>State / region values</small></span></div>
+  <div><i><svg class="ico" aria-hidden="true"><use href="#i-map"/></svg></i><span><b data-count>{{ '{:,}'.format(stats.districts) }}</b><small>District values</small></span></div>
+  <p>Coverage reflects the database currently connected to this app.</p>
+</section>
+
+<section class="directory" id="directory">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">School explorer</span>
+      <h2>Schools across India</h2>
+      <p>Search, filter and open a profile for more details.</p>
+    </div>
+    <b class="count">{{ '{:,}'.format(total) }} results</b>
+  </div>
+
+  <form class="filters">
+    <input name="q" value="{{ q }}" placeholder="Search name, code or location" aria-label="Search name, code or location">
+    <select name="state" aria-label="State or region"><option value="">All states / regions</option>{% for x in states %}<option {% if x==state %}selected{% endif %}>{{ x }}</option>{% endfor %}</select>
+    <select name="district" aria-label="District"><option value="">All districts</option>{% for x in districts %}<option {% if x==district %}selected{% endif %}>{{ x }}</option>{% endfor %}</select>
+    <select name="board" aria-label="Board"><option value="">All boards</option>{% for x in boards %}<option {% if x==board %}selected{% endif %}>{{ x }}</option>{% endfor %}</select>
+    <button>Apply filters</button>
+    {% if q or state or district or board %}<a href="{{ url_for('home') }}">Clear</a>{% endif %}
+  </form>
+
+  {% if schools %}
+  <div class="school-grid">
+    {% for s in schools %}
+    <article class="school-card reveal tone-{{ loop.index0 % 6 }}" style="--d:{{ loop.index0 % 3 }}">
+      <div class="card-top"><span class="avatar">{{ (s.school_name or 'S')[0]|upper }}</span><small>School profile</small></div>
+      <h3><a href="{{ school_url(s) }}">{{ s.school_name or 'School name unavailable' }}</a></h3>
+      <p class="location"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><span>{{ s.display_location or 'Location details not available' }}</span></p>
+      <div class="chips">{% if s.board_type or s.affiliation_type %}<span><small>Board</small>{{ s.board_type or s.affiliation_type }}</span>{% endif %}{% if s.class_range %}<span><small>Classes</small>{{ s.class_range }}</span>{% endif %}{% if s.management_type %}<span><small>Management</small>{{ s.management_type }}</span>{% endif %}</div>
+      <a class="view-link" href="{{ school_url(s) }}">View school profile <i><svg class="ico" aria-hidden="true"><use href="#i-arrow-ur"/></svg></i></a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty">
+    <i><svg class="ico" aria-hidden="true"><use href="#i-search"/></svg></i>
+    <h3>No matching schools found</h3>
+    <p>Try a different name, location or filter.</p>
+    <a class="primary" href="{{ url_for('home') }}">Show all schools</a>
+  </div>
+  {% endif %}
+
+  {% if pages>1 %}
+  <nav class="pagination" aria-label="Pagination">
+    {% if page>1 %}<a href="{{ url_for('home',q=q,state=state,district=district,board=board,page=page-1) }}"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"/></svg> Previous</a>{% else %}<span></span>{% endif %}
+    <span>Page {{ page }} of {{ pages }}</span>
+    {% if page<pages %}<a href="{{ url_for('home',q=q,state=state,district=district,board=board,page=page+1) }}">Next <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+
+<section class="about-band reveal" id="about">
+  <span class="about-icon"><svg class="ico" aria-hidden="true"><use href="#i-spark"/></svg></span>
+  <div>
+    <span class="eyebrow">Built for discovery</span>
+    <h2>Useful information, without the guesswork.</h2>
+    <p>Profiles use fields present in the database. Missing details are not filled with invented fees, facilities, ratings or admission dates.</p>
+  </div>
+  <a href="#directory">Browse directory <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+</section>
+
+{% endblock %}

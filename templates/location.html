@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description }}{% endblock %}
+{% block og_title %}{{ title }}{% endblock %}
+{% block og_description %}{{ description }}{% endblock %}
+{% block twitter_title %}{{ title }}{% endblock %}
+{% block twitter_description %}{{ description }}{% endblock %}
+{% block content %}
+<section class="location-hero" style="padding:64px var(--gutter) 48px;background:linear-gradient(135deg,#0b2342,#174a78);color:#fff">
+  <nav class="breadcrumbs" aria-label="Breadcrumb" style="margin-bottom:16px;font-size:14px">
+    <ol style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0;padding:0;list-style:none">
+      <li><a href="{{ url_for('home') }}" style="color:#cfdeee;text-decoration:underline;text-underline-offset:3px">Home</a></li>
+      <li style="color:rgba(255,255,255,0.4)">/</li>
+      <li><a href="{{ url_for('home', state=state) }}" style="color:#cfdeee;text-decoration:underline;text-underline-offset:3px">{{ state }}</a></li>
+      <li style="color:rgba(255,255,255,0.4)">/</li>
+      <li aria-current="page" style="color:#fff;font-weight:600"><span>{{ district }}</span></li>
+    </ol>
+  </nav>
+  <div class="eyebrow" style="color:#ffc53d">District directory · {{ state }}</div>
+  <h1 style="font:600 clamp(36px,5vw,56px)/1.1 var(--display);max-width:900px;margin:12px 0">Schools in {{ district }}, {{ state }}</h1>
+  <p style="max-width:720px;color:#c8d8e9;font-size:17px;line-height:1.7">Browse verified school records listed for {{ district }}. Explore individual profiles, class ranges, boards, management categories, and location details.</p>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:24px">
+    <span style="background:#ffffff18;border:1px solid #ffffff28;border-radius:99px;padding:9px 16px;font-weight:600">{{ '{:,}'.format(total) }} school records</span>
+    <a class="top-cta" href="{{ url_for('home',state=state,district=district) }}">Filter directory <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+  </div>
+</section>
+<section class="directory" style="padding-top:52px">
+  <div class="section-head">
+    <div>
+      <span class="eyebrow">Local directory</span>
+      <h2>Explore schools in {{ district }}</h2>
+      <p>School records listed based on the official dataset.</p>
+    </div>
+    <b class="count">{{ '{:,}'.format(total) }} records</b>
+  </div>
+  {% if schools %}
+  <div class="school-grid">
+    {% for s in schools %}
+    <article class="school-card reveal tone-{{ loop.index0 % 6 }}">
+      <div class="card-top">
+        <span class="avatar">{{ (s.school_name or 'S')[0]|upper }}</span>
+        <small>School profile</small>
+      </div>
+      <h3><a href="{{ school_url(s) }}">{{ s.school_name or 'School name unavailable' }}</a></h3>
+      <p class="location"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><span>{{ s.display_location or district ~ ', ' ~ state }}</span></p>
+      <div class="chips">
+        {% if s.board_type or s.affiliation_type %}<span><small>Board</small>{{ s.board_type or s.affiliation_type }}</span>{% endif %}
+        {% if s.class_range %}<span><small>Classes</small>{{ s.class_range }}</span>{% endif %}
+        {% if s.management_type %}<span><small>Management</small>{{ s.management_type }}</span>{% endif %}
+      </div>
+      <a class="view-link" href="{{ school_url(s) }}">View school profile <i><svg class="ico" aria-hidden="true"><use href="#i-arrow-ur"/></svg></i></a>
+    </article>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p>No school records are listed for this location yet.</p>
+  {% endif %}
+  {% if pages > 1 %}
+  <nav class="pagination" aria-label="Pagination">
+    {% if page > 1 %}
+    <a href="{{ url_for('location_page',state_slug=state|slugify,district_slug=district|slugify,page=page-1) }}"><svg class="ico" aria-hidden="true"><use href="#i-arrow-left"/></svg> Previous</a>
+    {% else %}
+    <span></span>
+    {% endif %}
+    <span>Page {{ page }} of {{ pages }}</span>
+    {% if page < pages %}
+    <a href="{{ url_for('location_page',state_slug=state|slugify,district_slug=district|slugify,page=page+1) }}">Next <svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    {% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}
