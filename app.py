@@ -78,6 +78,8 @@ LOCATION_CACHE = None
 def qi(s):
     return '"' + str(s).replace('"', '""') + '"'
 
+SCHEMA_CACHE = None
+
 def db():
     if 'db' not in g:
         g.db = get_db_connection()
@@ -86,10 +88,17 @@ def db():
 @app.teardown_appcontext
 def close_db(e=None):
     c = g.pop('db', None)
-    if c:
-        c.close()
+    if c is not None:
+        try:
+            c.close()
+        except Exception as err:
+            app.logger.warning('Error returning database connection to pool: %s', err)
 
 def schema():
+    global SCHEMA_CACHE
+    if SCHEMA_CACHE is not None:
+        return SCHEMA_CACHE
+
     c = db()
     tables = [x['name'] for x in c.execute("SELECT name FROM sqlite_master WHERE type IN ('table', 'view')")]
     if TABLE not in tables:
@@ -102,7 +111,8 @@ def schema():
             if opt.lower() in lookup:
                 mapping[key] = lookup[opt.lower()]
                 break
-    return cols, mapping
+    SCHEMA_CACHE = (cols, mapping)
+    return SCHEMA_CACHE
 
 def getv(row, m, key):
     col = m.get(key)
@@ -599,7 +609,6 @@ def sitemap_schools(part):
         cur_offset = offset
         end_offset = offset + SITEMAP_SIZE
 
-        stream_conn = get_stream_connection()
         try:
             while cur_offset < end_offset:
                 limit = min(batch_size, end_offset - cur_offset)
@@ -611,7 +620,7 @@ def sitemap_schools(part):
                     ORDER BY {qi(udise_col)}
                     LIMIT {limit} OFFSET {cur_offset}
                 """
-                batch = stream_conn.execute(query).fetchall()
+                batch = c.execute(query).fetchall()
                 if not batch:
                     break
 
@@ -636,7 +645,7 @@ def sitemap_schools(part):
                 if len(batch) < limit:
                     break
         finally:
-            stream_conn.close()
+            pass
 
         yield '</urlset>'
 
